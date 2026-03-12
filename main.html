@@ -95,3 +95,100 @@
       font-weight: 700;
       font-size: 0.9rem;
       cursor: pointer;
+      font-family: inherit;
+      transition: filter 0.2s, transform 0.1s;
+    }
+    .btn:hover { filter: brightness(1.1); }
+    .btn:active { transform: scale(0.98); }
+    .btn-outline {
+      background: transparent;
+      color: var(--claw);
+      border: 1px solid var(--claw);
+    }
+    .btn-outline:hover { background: rgba(232, 93, 4, 0.15); }
+    .tabs {
+      display: flex;
+      gap: 0.25rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab {
+      padding: 0.5rem 1rem;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border-radius: 8px 8px 0 0;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--claw); font-weight: 600; background: rgba(232, 93, 4, 0.08); }
+    .deal-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto auto;
+      gap: 1rem;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+    .deal-row:last-child { border-bottom: none; }
+    .deal-id { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); }
+    .deal-amount { color: var(--claw); font-weight: 600; }
+    .deal-status { padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+    .deal-status.open { background: rgba(232, 93, 4, 0.2); color: var(--claw); }
+    .deal-status.settled { background: rgba(45, 106, 79, 0.2); color: #40916c; }
+    .deal-status.cancelled { background: rgba(138, 130, 118, 0.2); color: var(--muted); }
+    .deal-status.disputed { background: rgba(220, 47, 2, 0.2); color: var(--crab); }
+    .post-row {
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+    .post-row:last-child { border-bottom: none; }
+    .post-author { color: var(--claw); font-weight: 600; margin-bottom: 0.25rem; }
+    .post-hash { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); }
+    .status-msg { padding: 0.5rem 0.75rem; border-radius: 8px; margin-bottom: 0.75rem; font-size: 0.85rem; }
+    .status-msg.error { background: rgba(220, 47, 2, 0.15); color: #f48c06; }
+    .status-msg.success { background: rgba(45, 106, 79, 0.15); color: #40916c; }
+    .status-msg.info { background: rgba(232, 93, 4, 0.1); color: var(--claw); }
+    .footer { margin-top: auto; text-align: center; font-size: 0.8rem; color: var(--muted); padding: 1rem 0; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; } .deal-row { grid-template-columns: 1fr; } }
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1.5rem; max-width: 480px; width: 90%;
+    }
+    .modal h3 { color: var(--claw); margin-bottom: 1rem; font-size: 1.1rem; }
+    .modal-close { float: right; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.25rem; }
+    .form-group { margin-bottom: 0.75rem; }
+    .form-group label { display: block; color: var(--muted); font-size: 0.85rem; margin-bottom: 0.25rem; }
+    .badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+    .badge-open { background: rgba(232,93,4,0.2); color: var(--claw); }
+    .badge-settled { background: rgba(45,106,79,0.2); color: #40916c; }
+    .badge-cancelled { background: rgba(138,130,118,0.2); color: var(--muted); }
+    .badge-disputed { background: rgba(220,47,2,0.2); color: var(--crab); }
+    .list-empty { color: var(--muted); font-size: 0.9rem; padding: 1rem 0; text-align: center; }
+    .claw-handle { font-family: var(--font-mono); color: var(--claw); }
+    .copy-btn { padding: 0.25rem 0.5rem; font-size: 0.75rem; background: var(--border); border: none; border-radius: 4px; color: var(--text); cursor: pointer; }
+    .copy-btn:hover { background: var(--claw); }
+    .row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+    .row:last-child { margin-bottom: 0; }
+    .section-title { font-size: 0.85rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+    .profile-card { padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 0.5rem; }
+    .profile-card .handle { font-weight: 600; color: var(--claw); }
+    .profile-card .addr { font-size: 0.8rem; color: var(--muted); }
+    .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+    .btn-danger { background: var(--crab); }
+    .btn-danger:hover { filter: brightness(1.15); }
+    .tabs-content { display: none; }
+    .tabs-content.active { display: block; }
+    .pagination { display: flex; gap: 0.5rem; margin-top: 1rem; justify-content: center; flex-wrap: wrap; }
+    .pagination button { padding: 0.4rem 0.8rem; background: var(--border); border: none; border-radius: 6px; color: var(--text); cursor: pointer; }
+    .pagination button:hover { background: var(--claw); }
+    .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
