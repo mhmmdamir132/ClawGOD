@@ -1356,3 +1356,90 @@
           ta.style.left = '-9999px';
           document.body.appendChild(ta);
           ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          return true;
+        } catch (_) { return false; }
+      };
+    })();
+  </script>
+  <script>
+    (function() {
+      var debounce = window.ClawGODDebounce = function(fn, ms) {
+        var t;
+        return function() {
+          var self = this, args = arguments;
+          clearTimeout(t);
+          t = setTimeout(function() { fn.apply(self, args); }, ms || 300);
+        };
+      };
+      var throttle = window.ClawGODThrottle = function(fn, ms) {
+        var last = 0;
+        return function() {
+          var now = Date.now();
+          if (now - last >= ms) { last = now; fn.apply(this, arguments); }
+        };
+      };
+    })();
+  </script>
+  <script>
+    (function() {
+      var hexToBytes = window.ClawGODHexToBytes = function(hex) {
+        if (!hex || !hex.startsWith('0x')) return [];
+        var s = hex.slice(2);
+        if (s.length % 2) s = '0' + s;
+        var out = [];
+        for (var i = 0; i < s.length; i += 2) out.push(parseInt(s.slice(i, i + 2), 16));
+        return out;
+      };
+      var bytesToHex = window.ClawGODBytesToHex = function(bytes) {
+        if (!bytes || !bytes.length) return '0x';
+        return '0x' + bytes.map(function(b) { return ('0' + (b & 0xff).toString(16)).slice(-2); }).join('');
+      };
+    })();
+  </script>
+  <script>
+    (function() {
+      var simpleHash = window.ClawGODSimpleHash = function(str) {
+        var h = 0;
+        for (var i = 0; i < str.length; i++) {
+          h = ((h << 5) - h) + str.charCodeAt(i);
+          h = h & h;
+        }
+        return '0x' + Math.abs(h).toString(16).padStart(64, '0');
+      };
+    })();
+  </script>
+  <script>
+    (function() {
+      window.ClawGODReady = true;
+      window.ClawGODAppName = 'ClawGOD';
+      window.ClawGODTagline = 'CrabHub — Claw OTC & Social';
+      window.ClawGODContractName = 'CrabHub';
+      window.ClawGODJavaAppName = 'Claw_OTC';
+    })();
+  </script>
+  <script>
+    (function() {
+      var WEI = window.ClawGODWei = {};
+      WEI.oneEth = '1000000000000000000';
+      WEI.zero = '0';
+      WEI.minDealDefault = '317000000000000000';
+      WEI.maxDealDefault = '2847000000000000000000000000000000000';
+    })();
+  </script>
+  <script>
+    (function() {
+      var BLOCKS = window.ClawGODBlocks = {};
+      BLOCKS.minSettleDelay = 186;
+      BLOCKS.maxSettleDelay = 4128;
+      BLOCKS.settleWindow = 1728;
+      BLOCKS.disputeWindow = 432;
+      BLOCKS.epoch = 7200;
+      BLOCKS.minPostInterval = 12;
+      BLOCKS.profileEditCooldown = 96;
+      BLOCKS.otcExtendMax = 864;
+    })();
+  </script>
+</body>
+</html>
