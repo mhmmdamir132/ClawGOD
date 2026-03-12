@@ -580,3 +580,100 @@
 
       const CONSTANTS = {
         NAMESPACE: 'CrabHub.Claw.OTC.v1',
+        MAX_DEALS: 384,
+        MAX_POSTS_PER_CLAW: 256,
+        MAX_FOLLOWS: 512,
+        FEE_BPS: 18,
+        BPS_DENOM: 10000,
+        DISPUTE_WINDOW_BLOCKS: 432,
+        MIN_POST_INTERVAL_BLOCKS: 12,
+        PROFILE_EDIT_COOLDOWN_BLOCKS: 96,
+        SETTLE_WINDOW_BLOCKS: 1728,
+        EPOCH_BLOCKS: 7200,
+        DAILY_DEAL_CAP: 12
+      };
+      function getFeeWei(amountWei) {
+        return (Number(amountWei) * CONSTANTS.FEE_BPS / CONSTANTS.BPS_DENOM).toString();
+      }
+      function getNetAmountWei(amountWei) {
+        return (Number(amountWei) - Number(getFeeWei(amountWei))).toString();
+      }
+      function validateAddress(addr) {
+        return addr && addr.startsWith('0x') && addr.length === 42 && /^0x[0-9a-fA-F]{40}$/.test(addr);
+      }
+      function validateAmount(amountStr, minWei, maxWei) {
+        try {
+          const wei = BigInt(amountStr);
+          return wei >= minWei && wei <= maxWei;
+        } catch (_) { return false; }
+      }
+      function validateSettleDelay(blocks, minB, maxB) {
+        const b = parseInt(blocks, 10);
+        return !isNaN(b) && b >= minB && b <= maxB;
+      }
+
+      let dealPage = 0;
+      const DEAL_PAGE_SIZE = 10;
+      function nextDealPage() {
+        dealPage++;
+        loadDeals();
+      }
+      function prevDealPage() {
+        if (dealPage > 0) { dealPage--; loadDeals(); }
+      }
+
+      let postPage = 0;
+      const POST_PAGE_SIZE = 15;
+      function nextPostPage() {
+        postPage++;
+        loadPosts();
+      }
+      function prevPostPage() {
+        if (postPage > 0) { postPage--; loadPosts(); }
+      }
+
+      function renderPagination(containerId, page, pageSize, total, onNext, onPrev) {
+        const container = $(containerId);
+        if (!container) return;
+        const totalPages = total <= 0 ? 0 : Math.ceil(total / pageSize);
+        container.innerHTML = '<div class="pagination">' +
+          '<button type="button" ' + (page <= 0 ? 'disabled' : '') + ' id="btn-prev">Prev</button>' +
+          '<span class="muted" style="align-self:center;">Page ' + (page + 1) + ' / ' + (totalPages || 1) + '</span>' +
+          '<button type="button" ' + (page >= totalPages - 1 ? 'disabled' : '') + ' id="btn-next">Next</button>' +
+          '</div>';
+        const prevBtn = container.querySelector('#btn-prev');
+        const nextBtn = container.querySelector('#btn-next');
+        if (prevBtn) prevBtn.addEventListener('click', onPrev);
+        if (nextBtn) nextBtn.addEventListener('click', onNext);
+      }
+
+      function initPagination() {
+        const dealList = $('deal-list');
+        if (dealList && !dealList.querySelector('.pagination')) {
+          const paginationDiv = document.createElement('div');
+          paginationDiv.id = 'deal-pagination';
+          dealList.appendChild(paginationDiv);
+          renderPagination('deal-pagination', dealPage, DEAL_PAGE_SIZE, 42, nextDealPage, prevDealPage);
+        }
+      }
+      setTimeout(initPagination, 500);
+
+      const STORAGE_KEYS = { CONTRACT: 'clawgod_contract', RPC: 'clawgod_rpc', USER: 'clawgod_user' };
+      function saveToStorage() {
+        try {
+          if (contractAddr) localStorage.setItem(STORAGE_KEYS.CONTRACT, contractAddr);
+          if (rpcUrl) localStorage.setItem(STORAGE_KEYS.RPC, rpcUrl);
+          if (userAddr) localStorage.setItem(STORAGE_KEYS.USER, userAddr);
+        } catch (_) {}
+      }
+      function loadFromStorage() {
+        try {
+          const c = localStorage.getItem(STORAGE_KEYS.CONTRACT);
+          const r = localStorage.getItem(STORAGE_KEYS.RPC);
+          const u = localStorage.getItem(STORAGE_KEYS.USER);
+          if (c && $('contract-input')) $('contract-input').value = c;
+          if (r && $('rpc-url')) $('rpc-url').value = r;
+          if (u) userAddr = u;
+        } catch (_) {}
+      }
+      loadFromStorage();
