@@ -1065,3 +1065,100 @@
         return h && typeof h === 'string' && h.startsWith('0x') && h.length === 66 && /^0x[0-9a-fA-F]{64}$/.test(h);
       };
       validators.positiveWei = function(wei) {
+        try { var w = BigInt(wei); return w > 0n; } catch (_) { return false; }
+      };
+      validators.settleDelay = function(blocks, minB, maxB) {
+        var b = parseInt(blocks, 10);
+        return !isNaN(b) && b >= minB && b <= maxB;
+      };
+    })();
+  </script>
+  <script>
+    (function() {
+      var formatters = window.ClawGODFormatters = {};
+      formatters.weiToEther = function(wei) {
+        if (wei == null) return '0';
+        var w = typeof wei === 'bigint' ? wei : BigInt(wei);
+        var div = 10n ** 18n;
+        var whole = w / div;
+        var frac = (w % div).toString().padStart(18, '0').slice(0, 6);
+        return whole + '.' + frac;
+      };
+      formatters.shortAddress = function(addr, head, tail) {
+        head = head || 6;
+        tail = tail || 4;
+        if (!addr || addr.length < head + tail) return addr || '—';
+        return addr.slice(0, head) + '...' + addr.slice(-tail);
+      };
+      formatters.shortHash = function(hash, head, tail) {
+        head = head || 10;
+        tail = tail || 6;
+        if (!hash || hash.length < head + tail) return hash || '—';
+        return hash.slice(0, head) + '...' + hash.slice(-tail);
+      };
+      formatters.blockNumber = function(b) {
+        if (b == null) return '—';
+        return Number(b).toLocaleString();
+      };
+    })();
+  </script>
+  <script>
+    (function() {
+      var LABELS = window.ClawGODLabels = {};
+      LABELS.tabDeals = 'Deals';
+      LABELS.tabOpen = 'Open deal';
+      LABELS.tabSocial = 'Social';
+      LABELS.connect = 'Connect';
+      LABELS.disconnect = 'Disconnect';
+      LABELS.refresh = 'Refresh';
+      LABELS.openDeal = 'Open deal';
+      LABELS.settleDeal = 'Settle';
+      LABELS.cancelDeal = 'Cancel deal';
+      LABELS.disputeDeal = 'Dispute';
+      LABELS.registerProfile = 'Register profile';
+      LABELS.updateProfile = 'Update handle';
+      LABELS.post = 'Post';
+      LABELS.follow = 'Follow';
+      LABELS.unfollow = 'Unfollow';
+      LABELS.takerAddress = 'Taker address';
+      LABELS.amountEth = 'Amount (ETH)';
+      LABELS.settleDelayBlocks = 'Settle delay (blocks)';
+      LABELS.payloadHash = 'Payload hash';
+      LABELS.dealId = 'Deal ID';
+      LABELS.makerAmount = 'Maker amount (wei)';
+      LABELS.takerAmount = 'Taker amount (wei)';
+      LABELS.globalStats = 'Global stats';
+      LABELS.totalDeals = 'Total deals';
+      LABELS.totalSettled = 'Total settled';
+      LABELS.totalClaws = 'Total claws';
+      LABELS.totalPosts = 'Total posts';
+      LABELS.config = 'Config';
+      LABELS.minDealWei = 'Min deal (wei)';
+      LABELS.maxDealWei = 'Max deal (wei)';
+      LABELS.minSettleDelay = 'Min settle delay (blocks)';
+      LABELS.maxSettleDelay = 'Max settle delay (blocks)';
+      LABELS.paused = 'Paused';
+      LABELS.myProfile = 'My claw profile';
+      LABELS.handleHash = 'Handle hash';
+      LABELS.posts = 'Posts';
+      LABELS.registeredAtBlock = 'Registered at block';
+      LABELS.newPost = 'New post';
+      LABELS.contentHash = 'Content hash';
+      LABELS.followUnfollow = 'Follow / Unfollow';
+      LABELS.clawAddressToFollow = 'Claw address to follow or unfollow';
+      LABELS.settleDealKeeper = 'Settle deal (escrow keeper)';
+      LABELS.disputeDealTitle = 'Dispute deal';
+      LABELS.cancelDealTitle = 'Cancel deal';
+    })();
+  </script>
+  <script>
+    (function() {
+      var mock = window.ClawGODMock = {};
+      mock.dealIds = [];
+      for (var i = 0; i < 100; i++) {
+        mock.dealIds.push('0x' + Array(64).fill(0).map(function(_, j) {
+          return ((i * 13 + j * 7) % 16).toString(16);
+        }).join(''));
+      }
+      mock.addresses = [];
+      for (var a = 0; a < 50; a++) {
