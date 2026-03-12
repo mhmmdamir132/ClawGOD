@@ -483,3 +483,100 @@
       function shortAddr(addr) {
         if (!addr || addr.length < 10) return addr || '—';
         return addr.slice(0, 6) + '...' + addr.slice(-4);
+      }
+      function shortHash(hash) {
+        if (!hash || hash.length < 16) return hash || '—';
+        return hash.slice(0, 10) + '...' + hash.slice(-6);
+      }
+      function hashContent(str) {
+        let h = 0;
+        for (let i = 0; i < str.length; i++) {
+          const c = str.charCodeAt(i);
+          h = ((h << 5) - h) + c;
+          h = h & h;
+        }
+        return '0x' + Math.abs(h).toString(16).padStart(64, '0');
+      }
+
+      document.addEventListener('click', (e) => {
+        const dealRow = e.target.closest('.deal-row');
+        if (dealRow && connected) {
+          const dealId = dealRow.querySelector('.deal-id')?.textContent?.trim() || '';
+          const amount = dealRow.querySelector('.deal-amount')?.textContent || '';
+          const status = dealRow.querySelector('.deal-status')?.textContent || 'Open';
+          const html = '<div class="row"><span class="muted">Deal ID</span><span class="addr">' + dealId + '</span></div>' +
+            '<div class="row"><span class="muted">Amount</span><span>' + amount + '</span></div>' +
+            '<div class="row"><span class="muted">Status</span><span class="badge badge-' + status.toLowerCase() + '">' + status + '</span></div>';
+          openModal('Deal details', html);
+        }
+      });
+
+      $('btn-register-profile').addEventListener('click', () => {
+        if (!connected) return;
+        const handle = ($('profile-handle-input') && $('profile-handle-input').value.trim()) || '';
+        const hash = handle ? hashContent(handle) : '0x' + '0'.repeat(64);
+        showMsg('open-msg', 'Register profile simulated. Handle hash: ' + shortHash(hash), 'success');
+      });
+      $('btn-update-profile').addEventListener('click', () => {
+        if (!connected) return;
+        showMsg('open-msg', 'Update profile simulated.', 'info');
+      });
+      $('btn-post').addEventListener('click', () => {
+        if (!connected) return;
+        const raw = ($('post-content-hash') && $('post-content-hash').value.trim()) || '';
+        const contentHash = raw.startsWith('0x') ? raw : hashContent(raw);
+        showMsg('open-msg', 'Post simulated. Content hash: ' + shortHash(contentHash), 'success');
+        loadPosts();
+      });
+      $('btn-follow').addEventListener('click', () => {
+        if (!connected) return;
+        const addr = ($('follow-address') && $('follow-address').value.trim()) || '';
+        if (!addr || !addr.startsWith('0x')) { showMsg('open-msg', 'Invalid address.', 'error'); return; }
+        showMsg('open-msg', 'Follow ' + shortAddr(addr) + ' simulated.', 'success');
+      });
+      $('btn-unfollow').addEventListener('click', () => {
+        if (!connected) return;
+        const addr = ($('follow-address') && $('follow-address').value.trim()) || '';
+        if (!addr) return;
+        showMsg('open-msg', 'Unfollow simulated.', 'info');
+      });
+      $('btn-settle').addEventListener('click', () => {
+        if (!connected) return;
+        const dealId = ($('settle-deal-id') && $('settle-deal-id').value.trim()) || '';
+        const makerAmt = ($('settle-maker-amount') && $('settle-maker-amount').value.trim()) || '';
+        const takerAmt = ($('settle-taker-amount') && $('settle-taker-amount').value.trim()) || '';
+        showMsg('open-msg', 'Settle simulated. Deal: ' + shortHash(dealId) + ', Maker: ' + makerAmt + ', Taker: ' + takerAmt, 'info');
+      });
+      $('btn-dispute').addEventListener('click', () => {
+        if (!connected) return;
+        const dealId = ($('dispute-deal-id') && $('dispute-deal-id').value.trim()) || '';
+        showMsg('open-msg', 'Dispute deal simulated: ' + shortHash(dealId), 'error');
+      });
+      $('btn-cancel-deal').addEventListener('click', () => {
+        if (!connected) return;
+        const dealId = ($('cancel-deal-id') && $('cancel-deal-id').value.trim()) || '';
+        showMsg('open-msg', 'Cancel deal simulated: ' + shortHash(dealId), 'info');
+        loadDeals();
+      });
+
+      function loadConfig() {
+        if (!connected) {
+          $('cfg-min-deal').textContent = '—';
+          $('cfg-max-deal').textContent = '—';
+          $('cfg-min-settle').textContent = '—';
+          $('cfg-max-settle').textContent = '—';
+          $('cfg-paused').textContent = '—';
+          return;
+        }
+        setTimeout(() => {
+          $('cfg-min-deal').textContent = '317e15';
+          $('cfg-max-deal').textContent = '2847e18';
+          $('cfg-min-settle').textContent = '186';
+          $('cfg-max-settle').textContent = '4128';
+          $('cfg-paused').textContent = 'No';
+        }, 200);
+      }
+      $('btn-connect').addEventListener('click', () => { setTimeout(loadConfig, 400); });
+
+      const CONSTANTS = {
+        NAMESPACE: 'CrabHub.Claw.OTC.v1',
