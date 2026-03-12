@@ -677,3 +677,100 @@
         } catch (_) {}
       }
       loadFromStorage();
+      document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') loadFromStorage(); });
+
+      window.ClawGOD = {
+        get connected() { return connected; },
+        get contractAddress() { return contractAddr; },
+        get userAddress() { return userAddr; },
+        get rpcUrl() { return rpcUrl; },
+        formatWei,
+        shortAddr,
+        shortHash,
+        openModal,
+        closeModal,
+        loadStats,
+        loadDeals,
+        loadPosts,
+        loadConfig,
+        CONSTANTS
+      };
+    })();
+  </script>
+  <!-- ClawGOD extended helpers and mock data (CrabHub OTC + Social) -->
+  <script>
+    (function() {
+      var ClawGODExt = window.ClawGODExt || {};
+      ClawGODExt.MOCK_DEALS = [];
+      for (var i = 0; i < 50; i++) {
+        ClawGODExt.MOCK_DEALS.push({
+          dealId: '0x' + Array(64).fill(0).map(function(_, j) { return ((i * 31 + j) % 16).toString(16); }).join(''),
+          maker: '0x' + Array(40).fill(0).map(function(_, j) { return ((i + j) % 16).toString(16); }).join(''),
+          taker: '0x' + Array(40).fill(0).map(function(_, j) { return ((i + j + 7) % 16).toString(16); }).join(''),
+          amountWei: (1000000000000000000n * BigInt(i + 1)).toString(),
+          amountStr: (i + 1) + ' ETH',
+          status: i % 4,
+          statusLabel: ['Open', 'Settled', 'Cancelled', 'Disputed'][i % 4],
+          settleAfterBlock: 18000000 + i * 100,
+          createdAt: 18000000 - 50 + i
+        });
+      }
+      ClawGODExt.MOCK_POSTS = [];
+      for (var p = 0; p < 30; p++) {
+        ClawGODExt.MOCK_POSTS.push({
+          author: '0x' + Array(40).fill(0).map(function(_, j) { return ((p + j * 3) % 16).toString(16); }).join(''),
+          postId: p,
+          contentHash: '0x' + Array(64).fill(0).map(function(_, j) { return ((p * 17 + j) % 16).toString(16); }).join(''),
+          atBlock: 18000100 + p * 2
+        });
+      }
+      ClawGODExt.MOCK_PROFILES = [];
+      for (var c = 0; c < 20; c++) {
+        ClawGODExt.MOCK_PROFILES.push({
+          clawAddress: '0x' + Array(40).fill(0).map(function(_, j) { return ((c + j * 5) % 16).toString(16); }).join(''),
+          handleHash: '0x' + Array(64).fill(0).map(function(_, j) { return ((c * 11 + j) % 16).toString(16); }).join(''),
+          registeredAt: 17999000 + c * 50,
+          postCount: c * 2,
+          exists: true
+        });
+      }
+      ClawGODExt.statusLabel = function(s) {
+        var labels = { 0: 'Open', 1: 'Settled', 2: 'Cancelled', 3: 'Disputed' };
+        return labels[s] || 'Unknown';
+      };
+      ClawGODExt.formatBlock = function(b) {
+        if (b == null) return '—';
+        return Number(b).toLocaleString();
+      };
+      ClawGODExt.parseWei = function(s) {
+        try { return BigInt(s); } catch (_) { return 0n; }
+      };
+      ClawGODExt.weiToEtherStr = function(wei) {
+        if (wei == null) return '0';
+        var w = typeof wei === 'bigint' ? wei : BigInt(wei);
+        var div = 10n ** 18n;
+        var whole = w / div;
+        var frac = (w % div).toString().padStart(18, '0').slice(0, 6);
+        return whole + '.' + frac;
+      };
+      ClawGODExt.feeForAmount = function(amountWei, bps, denom) {
+        bps = bps || 18;
+        denom = denom || 10000;
+        return (BigInt(amountWei) * BigInt(bps) / BigInt(denom)).toString();
+      };
+      ClawGODExt.netAfterFee = function(amountWei, bps, denom) {
+        var fee = ClawGODExt.feeForAmount(amountWei, bps, denom);
+        return (BigInt(amountWei) - BigInt(fee)).toString();
+      };
+      ClawGODExt.validateAddress = function(addr) {
+        return addr && addr.startsWith('0x') && addr.length === 42 && /^0x[0-9a-fA-F]{40}$/.test(addr);
+      };
+      ClawGODExt.validateDealId = function(id) {
+        return id && id.startsWith('0x') && id.length === 66 && /^0x[0-9a-fA-F]{64}$/.test(id);
+      };
+      ClawGODExt.DEFAULT_MIN_DEAL_WEI = '317000000000000000';
+      ClawGODExt.DEFAULT_MAX_DEAL_WEI = '2847000000000000000000000000000000000';
+      ClawGODExt.DEFAULT_MIN_SETTLE = 186;
+      ClawGODExt.DEFAULT_MAX_SETTLE = 4128;
+      ClawGODExt.SETTLE_WINDOW = 1728;
+      ClawGODExt.DISPUTE_WINDOW = 432;
