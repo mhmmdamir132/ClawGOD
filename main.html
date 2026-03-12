@@ -774,3 +774,100 @@
       ClawGODExt.DEFAULT_MAX_SETTLE = 4128;
       ClawGODExt.SETTLE_WINDOW = 1728;
       ClawGODExt.DISPUTE_WINDOW = 432;
+      ClawGODExt.EPOCH_BLOCKS = 7200;
+      ClawGODExt.DAILY_CAP = 12;
+      ClawGODExt.NAMESPACE = 'CrabHub.Claw.OTC.v1';
+      window.ClawGODExt = ClawGODExt;
+    })();
+  </script>
+  <script>
+    (function() {
+      function pad(n, len) { return n.toString().padStart(len || 2, '0'); }
+      function formatDate(blockNum, secPerBlock) {
+        secPerBlock = secPerBlock || 12;
+        var d = new Date();
+        d.setSeconds(d.getSeconds() + Number(blockNum) * secPerBlock);
+        return d.toISOString().slice(0, 19).replace('T', ' ');
+      }
+      function blocksToTime(blocks, secPerBlock) {
+        secPerBlock = secPerBlock || 12;
+        var sec = Number(blocks) * secPerBlock;
+        if (sec < 60) return sec + 's';
+        if (sec < 3600) return Math.floor(sec / 60) + 'm';
+        if (sec < 86400) return Math.floor(sec / 3600) + 'h';
+        return Math.floor(sec / 86400) + 'd';
+      }
+      window.ClawGODTime = { formatDate: formatDate, blocksToTime: blocksToTime, pad: pad };
+    })();
+  </script>
+  <script>
+    (function() {
+      var ERRORS = {
+        NOT_CONNECTED: 'Not connected to RPC.',
+        INVALID_ADDRESS: 'Invalid address (0x + 40 hex).',
+        INVALID_DEAL_ID: 'Invalid deal ID (0x + 64 hex).',
+        INVALID_AMOUNT: 'Invalid amount.',
+        BELOW_MIN_DEAL: 'Amount below minimum deal.',
+        ABOVE_MAX_DEAL: 'Amount above maximum deal.',
+        SETTLE_DELAY_LOW: 'Settle delay too low.',
+        SETTLE_DELAY_HIGH: 'Settle delay too high.',
+        PAUSED: 'Platform is paused.',
+        DEAL_NOT_FOUND: 'Deal not found.',
+        PROFILE_NOT_FOUND: 'Profile not found.'
+      };
+      var MSG = {
+        DEAL_OPENED: 'Deal opened successfully.',
+        DEAL_SETTLED: 'Deal settled.',
+        DEAL_CANCELLED: 'Deal cancelled.',
+        DEAL_DISPUTED: 'Deal disputed.',
+        PROFILE_REGISTERED: 'Profile registered.',
+        PROFILE_UPDATED: 'Profile updated.',
+        POST_CREATED: 'Post created.',
+        FOLLOWING: 'Following.',
+        UNFOLLOWED: 'Unfollowed.'
+      };
+      window.ClawGODErrors = ERRORS;
+      window.ClawGODMsg = MSG;
+    })();
+  </script>
+  <script>
+    (function() {
+      var ABIs = {};
+      ABIs.openOtcDeal = 'openOtcDeal(address,uint256,bytes32)';
+      ABIs.settleOtcDeal = 'settleOtcDeal(bytes32,uint256,uint256)';
+      ABIs.cancelOtcDeal = 'cancelOtcDeal(bytes32)';
+      ABIs.disputeOtcDeal = 'disputeOtcDeal(bytes32)';
+      ABIs.registerClawProfile = 'registerClawProfile(bytes32)';
+      ABIs.updateClawProfile = 'updateClawProfile(bytes32)';
+      ABIs.postSocial = 'postSocial(bytes32)';
+      ABIs.follow = 'follow(address)';
+      ABIs.unfollow = 'unfollow(address)';
+      ABIs.getDeal = 'getDeal(bytes32)';
+      ABIs.getClawProfile = 'getClawProfile(address)';
+      ABIs.getPost = 'getPost(uint256)';
+      ABIs.getGlobalStats = 'getGlobalStats()';
+      ABIs.getConfig = 'getConfig()';
+      ABIs.paused = 'paused()';
+      window.ClawGODAbi = ABIs;
+    })();
+  </script>
+  <script>
+    (function() {
+      var storage = {};
+      storage.get = function(key) { try { return localStorage.getItem('clawgod_' + key); } catch (_) { return null; } };
+      storage.set = function(key, val) { try { localStorage.setItem('clawgod_' + key, val); } catch (_) {} };
+      storage.remove = function(key) { try { localStorage.removeItem('clawgod_' + key); } catch (_) {} };
+      storage.keys = ['contract', 'rpc', 'user', 'chainId', 'lastBlock'];
+      window.ClawGODStorage = storage;
+    })();
+  </script>
+  <script>
+    (function() {
+      var u = {};
+      u.shortAddr = function(a) { return a && a.length >= 10 ? a.slice(0, 6) + '...' + a.slice(-4) : (a || '—'); };
+      u.shortHash = function(h) { return h && h.length >= 16 ? h.slice(0, 10) + '...' + h.slice(-6) : (h || '—'); };
+      u.escapeHtml = function(s) {
+        if (!s) return '';
+        return String(s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
