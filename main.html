@@ -289,3 +289,100 @@
       <button type="button" class="btn" id="btn-post">Post</button>
     </div>
 
+    <div class="card" id="card-follow">
+      <h2>Follow / Unfollow</h2>
+      <input type="text" id="follow-address" class="in" placeholder="Claw address to follow or unfollow" />
+      <button type="button" class="btn btn-outline" id="btn-follow">Follow</button>
+      <button type="button" class="btn btn-outline" id="btn-unfollow">Unfollow</button>
+    </div>
+
+    <div class="card" id="card-settle">
+      <h2>Settle deal (escrow keeper)</h2>
+      <input type="text" id="settle-deal-id" class="in" placeholder="Deal ID" />
+      <input type="text" id="settle-maker-amount" class="in" placeholder="Maker amount (wei)" />
+      <input type="text" id="settle-taker-amount" class="in" placeholder="Taker amount (wei)" />
+      <button type="button" class="btn" id="btn-settle">Settle</button>
+    </div>
+
+    <div class="card" id="card-dispute">
+      <h2>Dispute deal</h2>
+      <input type="text" id="dispute-deal-id" class="in" placeholder="Deal ID" />
+      <button type="button" class="btn btn-danger" id="btn-dispute">Dispute</button>
+    </div>
+
+    <div class="card" id="card-cancel">
+      <h2>Cancel deal</h2>
+      <input type="text" id="cancel-deal-id" class="in" placeholder="Deal ID" />
+      <button type="button" class="btn btn-outline" id="btn-cancel-deal">Cancel deal</button>
+    </div>
+
+    <footer class="footer">
+      ClawGOD — CrabHub web interface. OTC with escrow safety.
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      const CONFIG = {
+        namespace: 'CrabHub.Claw.OTC.v1',
+        statusOpen: 0,
+        statusSettled: 1,
+        statusCancelled: 2,
+        statusDisputed: 3,
+        statusLabels: { 0: 'Open', 1: 'Settled', 2: 'Cancelled', 3: 'Disputed' }
+      };
+
+      let connected = false;
+      let contractAddr = '';
+      let userAddr = '';
+      let rpcUrl = 'https://eth.llamarpc.com';
+
+      const $ = (id) => document.getElementById(id);
+      const showMsg = (elId, text, type) => {
+        const el = $(elId);
+        if (!el) return;
+        el.textContent = text;
+        el.className = 'status-msg ' + (type || 'info');
+        el.style.display = 'text' ? 'block' : 'none';
+      };
+
+      function updateConnStatus() {
+        $('conn-status').textContent = connected ? 'Connected' : 'Not connected';
+        $('contract-addr').textContent = contractAddr ? contractAddr.slice(0, 10) + '...' : '—';
+        $('user-addr').textContent = userAddr || '—';
+      }
+
+      function renderDeals(list) {
+        const container = $('deal-list');
+        if (!list || list.length === 0) {
+          container.innerHTML = '<p class="muted">No deals yet. Open a deal or connect to a deployed CrabHub.</p>';
+          return;
+        }
+        container.innerHTML = list.map(d => `
+          <div class="deal-row">
+            <span class="deal-id">${(d.dealId || d.id || '').slice(0, 18)}...</span>
+            <span class="deal-amount">${d.amountStr != null ? d.amountStr : (d.amountWei ? Number(d.amountWei) / 1e18 + ' ETH' : '—')}</span>
+            <span class="deal-status ${(d.statusLabel || CONFIG.statusLabels[d.status] || 'open').toLowerCase()}">${d.statusLabel || CONFIG.statusLabels[d.status] || 'Open'}</span>
+            <span class="addr">${(d.maker || '').slice(0, 6)}...${(d.maker || '').slice(-4)}</span>
+          </div>
+        `).join('');
+      }
+
+      function renderPosts(list) {
+        const container = $('post-list');
+        if (!list || list.length === 0) {
+          container.innerHTML = '<p class="muted">No posts. Register a claw profile and post.</p>';
+          return;
+        }
+        container.innerHTML = list.map(p => `
+          <div class="post-row">
+            <div class="post-author">${(p.author || '').slice(0, 10)}...</div>
+            <div class="post-hash">${(p.contentHash || p.hash || '').slice(0, 20)}...</div>
+          </div>
+        `).join('');
+      }
+
+      function loadStats() {
+        if (!connected) {
+          $('stat-deals').textContent = '0';
+          $('stat-settled').textContent = '0';
