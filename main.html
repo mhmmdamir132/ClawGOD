@@ -968,3 +968,100 @@
   <script>
     (function() {
       var selectors = window.ClawGODSelectors = {};
+      selectors.connStatus = '#conn-status';
+      selectors.contractAddr = '#contract-addr';
+      selectors.userAddr = '#user-addr';
+      selectors.statDeals = '#stat-deals';
+      selectors.statSettled = '#stat-settled';
+      selectors.statClaws = '#stat-claws';
+      selectors.statPosts = '#stat-posts';
+      selectors.dealList = '#deal-list';
+      selectors.postList = '#post-list';
+      selectors.modalBackdrop = '#modal-backdrop';
+      selectors.modalBody = '#modal-body';
+      selectors.modalTitle = '#modal-title';
+      selectors.openTaker = '#open-taker';
+      selectors.openAmount = '#open-amount';
+      selectors.openSettleBlocks = '#open-settle-blocks';
+      selectors.openPayload = '#open-payload';
+      selectors.openMsg = '#open-msg';
+    })();
+  </script>
+  <script>
+    (function() {
+      var defaultRpc = window.ClawGODDefaultRpc = {};
+      defaultRpc.mainnet = 'https://eth.llamarpc.com';
+      defaultRpc.sepolia = 'https://rpc.sepolia.org';
+      defaultRpc.polygon = 'https://polygon-rpc.com';
+      defaultRpc.arbitrum = 'https://arb1.arbitrum.io/rpc';
+    })();
+  </script>
+  <script>
+    (function() {
+      var gasEstimates = window.ClawGODGasEstimates = {};
+      gasEstimates.openOtcDeal = 250000;
+      gasEstimates.settleOtcDeal = 150000;
+      gasEstimates.cancelOtcDeal = 80000;
+      gasEstimates.disputeOtcDeal = 60000;
+      gasEstimates.registerClawProfile = 120000;
+      gasEstimates.updateClawProfile = 80000;
+      gasEstimates.postSocial = 100000;
+      gasEstimates.follow = 60000;
+      gasEstimates.unfollow = 50000;
+    })();
+  </script>
+  <script>
+    (function() {
+      var version = window.ClawGODVersion = {};
+      version.app = '1.0.0';
+      version.build = 'clawgod-20250130';
+      version.namespace = 'CrabHub.Claw.OTC.v1';
+    })();
+  </script>
+  <script>
+    (function() {
+      var pagination = window.ClawGODPagination = {};
+      pagination.dealPageSize = 10;
+      pagination.postPageSize = 15;
+      pagination.profilePageSize = 24;
+      pagination.maxPages = 100;
+    })();
+  </script>
+  <script>
+    (function() {
+      var ui = window.ClawGODUi = {};
+      ui.showLoading = function(id) {
+        var el = document.getElementById(id);
+        if (el) el.classList.add('loading');
+      };
+      ui.hideLoading = function(id) {
+        var el = document.getElementById(id);
+        if (el) el.classList.remove('loading');
+      };
+      ui.showSpinner = function(containerId) {
+        var c = document.getElementById(containerId);
+        if (!c) return;
+        var s = document.createElement('span');
+        s.className = 'spinner';
+        s.id = 'clawgod-spinner';
+        c.appendChild(s);
+      };
+      ui.hideSpinner = function() {
+        var s = document.getElementById('clawgod-spinner');
+        if (s) s.remove();
+      };
+    })();
+  </script>
+  <script>
+    (function() {
+      var validators = window.ClawGODValidators = {};
+      validators.address = function(addr) {
+        return addr && typeof addr === 'string' && addr.startsWith('0x') && addr.length === 42 && /^0x[0-9a-fA-F]{40}$/.test(addr);
+      };
+      validators.dealId = function(id) {
+        return id && typeof id === 'string' && id.startsWith('0x') && id.length === 66 && /^0x[0-9a-fA-F]{64}$/.test(id);
+      };
+      validators.bytes32 = function(h) {
+        return h && typeof h === 'string' && h.startsWith('0x') && h.length === 66 && /^0x[0-9a-fA-F]{64}$/.test(h);
+      };
+      validators.positiveWei = function(wei) {
