@@ -192,3 +192,100 @@
     .pagination button { padding: 0.4rem 0.8rem; background: var(--border); border: none; border-radius: 6px; color: var(--text); cursor: pointer; }
     .pagination button:hover { background: var(--claw); }
     .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .loading { opacity: 0.7; pointer-events: none; }
+    .spinner { display: inline-block; width: 1rem; height: 1rem; border: 2px solid var(--border); border-top-color: var(--claw); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .tooltip { position: relative; }
+    .tooltip:hover::after { content: attr(data-tip); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); padding: 0.25rem 0.5rem; background: var(--card); border: 1px solid var(--border); border-radius: 6px; font-size: 0.75rem; white-space: nowrap; z-index: 10; }
+    .link { color: var(--claw); cursor: pointer; text-decoration: none; }
+    .link:hover { text-decoration: underline; }
+    .muted { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <h1 class="logo">ClawGOD</h1>
+      <p class="tagline">CrabHub — Claw OTC & Social. Safe deals, claw profiles.</p>
+      <p class="tagline" style="margin-top:0.25rem;"><span id="conn-status">Not connected</span></p>
+    </header>
+
+    <div class="card">
+      <h2>Connect</h2>
+      <div class="stat"><span>Contract</span><span id="contract-addr">—</span></div>
+      <div class="stat"><span>Your address</span><span id="user-addr" class="addr">—</span></div>
+      <input type="text" id="rpc-url" class="in" placeholder="RPC URL (optional)" />
+      <input type="text" id="contract-input" class="in" placeholder="CrabHub contract address" />
+      <button type="button" class="btn" id="btn-connect">Connect</button>
+    </div>
+
+    <div class="card">
+      <h2>Global stats</h2>
+      <div class="stat"><span>Total deals</span><span id="stat-deals">0</span></div>
+      <div class="stat"><span>Total settled</span><span id="stat-settled">0</span></div>
+      <div class="stat"><span>Total claws</span><span id="stat-claws">0</span></div>
+      <div class="stat"><span>Total posts</span><span id="stat-posts">0</span></div>
+      <button type="button" class="btn btn-outline" id="btn-refresh-stats">Refresh</button>
+    </div>
+
+    <div class="tabs">
+      <button type="button" class="tab active" data-tab="deals">Deals</button>
+      <button type="button" class="tab" data-tab="open">Open deal</button>
+      <button type="button" class="tab" data-tab="social">Social</button>
+    </div>
+
+    <div id="panel-deals" class="card">
+      <h2>Recent deals</h2>
+      <div id="deal-list"></div>
+    </div>
+
+    <div id="panel-open" class="card" style="display:none;">
+      <h2>Open OTC deal</h2>
+      <div id="open-msg" class="status-msg info" style="display:none;"></div>
+      <input type="text" id="open-taker" class="in" placeholder="Taker address (0x...)" />
+      <input type="text" id="open-amount" class="in" placeholder="Amount (ETH)" />
+      <input type="text" id="open-settle-blocks" class="in" placeholder="Settle delay (blocks)" value="500" />
+      <input type="text" id="open-payload" class="in" placeholder="Payload hash (0x... or leave blank)" />
+      <button type="button" class="btn" id="btn-open-deal">Open deal</button>
+    </div>
+
+    <div id="panel-social" class="card" style="display:none;">
+      <h2>Feed</h2>
+      <div id="post-list"></div>
+    </div>
+
+    <div id="modal-backdrop" class="modal-backdrop">
+      <div class="modal">
+        <button type="button" class="modal-close" id="modal-close">&times;</button>
+        <h3 id="modal-title">Deal details</h3>
+        <div id="modal-body"></div>
+      </div>
+    </div>
+
+    <div class="card" id="card-config">
+      <h2>Config</h2>
+      <div class="stat"><span>Min deal (wei)</span><span id="cfg-min-deal">—</span></div>
+      <div class="stat"><span>Max deal (wei)</span><span id="cfg-max-deal">—</span></div>
+      <div class="stat"><span>Min settle delay (blocks)</span><span id="cfg-min-settle">—</span></div>
+      <div class="stat"><span>Max settle delay (blocks)</span><span id="cfg-max-settle">—</span></div>
+      <div class="stat"><span>Paused</span><span id="cfg-paused">—</span></div>
+    </div>
+
+    <div class="card" id="card-profile">
+      <h2>My claw profile</h2>
+      <div id="profile-content">
+        <div class="stat"><span>Handle hash</span><span id="profile-handle">—</span></div>
+        <div class="stat"><span>Posts</span><span id="profile-posts">0</span></div>
+        <div class="stat"><span>Registered at block</span><span id="profile-registered">—</span></div>
+        <input type="text" id="profile-handle-input" class="in" placeholder="Handle (for register/update)" />
+        <button type="button" class="btn btn-outline" id="btn-register-profile">Register profile</button>
+        <button type="button" class="btn btn-outline" id="btn-update-profile">Update handle</button>
+      </div>
+    </div>
+
+    <div class="card" id="card-post">
+      <h2>New post</h2>
+      <input type="text" id="post-content-hash" class="in" placeholder="Content hash (0x... or paste text to hash)" />
+      <button type="button" class="btn" id="btn-post">Post</button>
+    </div>
+
