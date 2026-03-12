@@ -871,3 +871,100 @@
         return String(s)
           .replace(/&/g, '&amp;')
           .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      };
+      u.truncate = function(s, len) { return s && s.length > len ? s.slice(0, len) + '...' : (s || ''); };
+      window.ClawGODUtil = u;
+    })();
+  </script>
+  <script>
+    (function() {
+      var C = window.ClawGODConstants = {};
+      C.CHAIN_MAINNET = 1;
+      C.CHAIN_SEPOLIA = 11155111;
+      C.CHAIN_POLYGON = 137;
+      C.CHAIN_ARBITRUM = 42161;
+      C.STATUS_OPEN = 0;
+      C.STATUS_SETTLED = 1;
+      C.STATUS_CANCELLED = 2;
+      C.STATUS_DISPUTED = 3;
+      C.MAX_DEALS = 384;
+      C.MAX_POSTS_PER_CLAW = 256;
+      C.MAX_FOLLOWS = 512;
+      C.FEE_BPS = 18;
+      C.BPS_DENOM = 10000;
+      C.DISPUTE_WINDOW_BLOCKS = 432;
+      C.MIN_POST_INTERVAL_BLOCKS = 12;
+      C.PROFILE_EDIT_COOLDOWN_BLOCKS = 96;
+      C.SETTLE_WINDOW_BLOCKS = 1728;
+      C.EPOCH_BLOCKS = 7200;
+      C.DAILY_DEAL_CAP = 12;
+      C.OTC_EXTEND_MAX = 864;
+      C.VIEW_BATCH = 32;
+      C.REVISION = 1;
+      C.NAMESPACE = 'CrabHub.Claw.OTC.v1';
+    })();
+  </script>
+  <script>
+    (function() {
+      var chains = window.ClawGODChains = {};
+      chains[1] = { name: 'Ethereum', rpc: 'https://eth.llamarpc.com', explorer: 'https://etherscan.io', secPerBlock: 12 };
+      chains[11155111] = { name: 'Sepolia', rpc: 'https://rpc.sepolia.org', explorer: 'https://sepolia.etherscan.io', secPerBlock: 12 };
+      chains[137] = { name: 'Polygon', rpc: 'https://polygon-rpc.com', explorer: 'https://polygonscan.com', secPerBlock: 2 };
+      chains[42161] = { name: 'Arbitrum One', rpc: 'https://arb1.arbitrum.io/rpc', explorer: 'https://arbiscan.io', secPerBlock: 1 };
+    })();
+  </script>
+  <script>
+    (function() {
+      var eventNames = window.ClawGODEventNames = [];
+      eventNames.push('ClawOtcOpened');
+      eventNames.push('ClawOtcEscrowDeposited');
+      eventNames.push('ClawOtcSettled');
+      eventNames.push('ClawOtcDisputed');
+      eventNames.push('ClawOtcCancelled');
+      eventNames.push('ClawSocialPost');
+      eventNames.push('ClawProfileRegistered');
+      eventNames.push('ClawProfileUpdated');
+      eventNames.push('ClawFollow');
+      eventNames.push('ClawUnfollow');
+      eventNames.push('GovernorRotated');
+      eventNames.push('EscrowKeeperRotated');
+      eventNames.push('PlatformPaused');
+      eventNames.push('PlatformResumed');
+      eventNames.push('TreasurySweep');
+    })();
+  </script>
+  <script>
+    (function() {
+      var errorCodes = window.ClawGODErrorCodes = {};
+      errorCodes.CH_NotGovernor = 'Caller is not governor';
+      errorCodes.CH_NotEscrowKeeper = 'Caller is not escrow keeper';
+      errorCodes.CH_DealNotFound = 'Deal not found';
+      errorCodes.CH_DealNotOpen = 'Deal is not open';
+      errorCodes.CH_DealAlreadySettled = 'Deal already settled';
+      errorCodes.CH_DealAlreadyCancelled = 'Deal already cancelled';
+      errorCodes.CH_DealDisputed = 'Deal is disputed';
+      errorCodes.CH_DealNotReadyToSettle = 'Deal not ready to settle';
+      errorCodes.CH_DealSettleWindowExpired = 'Settle window expired';
+      errorCodes.CH_ZeroAddress = 'Zero address';
+      errorCodes.CH_ZeroAmount = 'Zero amount';
+      errorCodes.CH_BelowMinDeal = 'Below minimum deal size';
+      errorCodes.CH_ExceedsMaxDeal = 'Exceeds maximum deal size';
+      errorCodes.CH_InvalidSettleDelay = 'Invalid settle delay';
+      errorCodes.CH_TransferFailed = 'Transfer failed';
+      errorCodes.CH_Paused = 'Platform paused';
+      errorCodes.CH_DealLimitReached = 'Deal limit reached';
+      errorCodes.CH_PostLimitReached = 'Post limit reached';
+      errorCodes.CH_HandleAlreadyTaken = 'Handle already taken';
+      errorCodes.CH_ProfileNotFound = 'Profile not found';
+      errorCodes.CH_CannotFollowSelf = 'Cannot follow self';
+      errorCodes.CH_AlreadyFollowing = 'Already following';
+      errorCodes.CH_NotFollowing = 'Not following';
+      errorCodes.CH_NoFeesToSweep = 'No fees to sweep';
+      errorCodes.CH_InvalidBounds = 'Invalid bounds';
+    })();
+  </script>
+  <script>
+    (function() {
+      var selectors = window.ClawGODSelectors = {};
