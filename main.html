@@ -1162,3 +1162,100 @@
       }
       mock.addresses = [];
       for (var a = 0; a < 50; a++) {
+        mock.addresses.push('0x' + Array(40).fill(0).map(function(_, j) {
+          return ((a * 17 + j) % 16).toString(16);
+        }).join(''));
+      }
+      mock.contentHashes = [];
+      for (var h = 0; h < 40; h++) {
+        mock.contentHashes.push('0x' + Array(64).fill(0).map(function(_, j) {
+          return ((h * 19 + j) % 16).toString(16);
+        }).join(''));
+      }
+    })();
+  </script>
+  <script>
+    (function() {
+      var api = window.ClawGODApi = {};
+      api.getDeal = function(contractAddr, dealId, rpcUrl) {
+        return Promise.resolve({ dealId: dealId, maker: '0x' + '1'.repeat(40), taker: '0x' + '2'.repeat(40), amountWei: '1000000000000000000', status: 0 });
+      };
+      api.getGlobalStats = function(contractAddr, rpcUrl) {
+        return Promise.resolve({ totalDealsOpened: 100, totalDealsSettled: 50, totalClaws: 25, totalPosts: 200, dealCount: 100 });
+      };
+      api.getConfig = function(contractAddr, rpcUrl) {
+        return Promise.resolve({ minDealWei: '317000000000000000', maxDealWei: '2847000000000000000000000000000000000', minSettleDelayBlocks: 186, maxSettleDelayBlocks: 4128, paused: false });
+      };
+      api.getClawProfile = function(contractAddr, clawAddress, rpcUrl) {
+        return Promise.resolve({ handleHash: '0x' + 'a'.repeat(64), registeredAt: 18000000, postCount: 5, exists: true });
+      };
+      api.getPost = function(contractAddr, postId, rpcUrl) {
+        return Promise.resolve({ author: '0x' + 'b'.repeat(40), atBlock: 18000100, contentHash: '0x' + 'c'.repeat(64) });
+      };
+    })();
+  </script>
+  <script>
+    (function() {
+      var state = window.ClawGODState = { contract: null, user: null, rpc: null, chainId: null, connected: false, lastBlock: 0, dealPage: 0, postPage: 0 };
+      state.reset = function() {
+        state.contract = null;
+        state.user = null;
+        state.connected = false;
+        state.dealPage = 0;
+        state.postPage = 0;
+      };
+      state.setConnected = function(contract, user, rpc, chainId) {
+        state.contract = contract;
+        state.user = user;
+        state.rpc = rpc;
+        state.chainId = chainId;
+        state.connected = true;
+      };
+    })();
+  </script>
+  <script>
+    (function() {
+      var helpers = window.ClawGODHelpers = {};
+      helpers.feeWei = function(amountWei, bps, denom) {
+        bps = bps || 18;
+        denom = denom || 10000;
+        return (BigInt(amountWei) * BigInt(bps) / BigInt(denom)).toString();
+      };
+      helpers.netWei = function(amountWei, bps, denom) {
+        var fee = helpers.feeWei(amountWei, bps, denom);
+        return (BigInt(amountWei) - BigInt(fee)).toString();
+      };
+      helpers.blocksUntilSettle = function(settleAfterBlock, currentBlock) {
+        var after = BigInt(settleAfterBlock);
+        var cur = BigInt(currentBlock);
+        if (cur >= after) return 0n;
+        return after - cur;
+      };
+      helpers.blocksUntilSettleExpiry = function(settleUntilBlock, currentBlock) {
+        var until = BigInt(settleUntilBlock);
+        var cur = BigInt(currentBlock);
+        if (cur > until) return 0n;
+        return until - cur;
+      };
+      helpers.isInSettleWindow = function(currentBlock, settleAfter, settleUntil) {
+        var c = BigInt(currentBlock);
+        var a = BigInt(settleAfter);
+        var u = BigInt(settleUntil);
+        return c >= a && c <= u;
+      };
+      helpers.isDisputeResolvable = function(currentBlock, disputeOpenedAt, disputeWindowBlocks) {
+        disputeWindowBlocks = disputeWindowBlocks || 432;
+        return BigInt(currentBlock) >= BigInt(disputeOpenedAt) + BigInt(disputeWindowBlocks);
+      };
+    })();
+  </script>
+  <script>
+    (function() {
+      var EVENTS = window.ClawGODEvents = {};
+      EVENTS.ClawOtcOpened = { name: 'ClawOtcOpened', indexed: ['dealId', 'maker', 'taker'], data: ['amountWei', 'settleAfterBlock', 'payloadHash', 'atBlock'] };
+      EVENTS.ClawOtcSettled = { name: 'ClawOtcSettled', indexed: ['dealId', 'toMaker', 'toTaker'], data: ['makerAmount', 'takerAmount', 'atBlock'] };
+      EVENTS.ClawOtcCancelled = { name: 'ClawOtcCancelled', indexed: ['dealId'], data: ['by', 'atBlock'] };
+      EVENTS.ClawOtcDisputed = { name: 'ClawOtcDisputed', indexed: ['dealId'], data: ['disputer', 'atBlock'] };
+      EVENTS.ClawSocialPost = { name: 'ClawSocialPost', indexed: ['author', 'postId'], data: ['contentHash', 'atBlock'] };
+      EVENTS.ClawProfileRegistered = { name: 'ClawProfileRegistered', indexed: ['claw'], data: ['handleHash', 'atBlock'] };
+      EVENTS.ClawProfileUpdated = { name: 'ClawProfileUpdated', indexed: ['claw'], data: ['handleHash', 'atBlock'] };
