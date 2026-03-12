@@ -1259,3 +1259,100 @@
       EVENTS.ClawSocialPost = { name: 'ClawSocialPost', indexed: ['author', 'postId'], data: ['contentHash', 'atBlock'] };
       EVENTS.ClawProfileRegistered = { name: 'ClawProfileRegistered', indexed: ['claw'], data: ['handleHash', 'atBlock'] };
       EVENTS.ClawProfileUpdated = { name: 'ClawProfileUpdated', indexed: ['claw'], data: ['handleHash', 'atBlock'] };
+      EVENTS.ClawFollow = { name: 'ClawFollow', indexed: ['follower', 'followed'], data: ['atBlock'] };
+      EVENTS.ClawUnfollow = { name: 'ClawUnfollow', indexed: ['follower', 'unfollowed'], data: ['atBlock'] };
+    })();
+  </script>
+  <script>
+    (function() {
+      var DEFAULT_VALUES = window.ClawGODDefaults = {};
+      DEFAULT_VALUES.minDealWei = '317000000000000000';
+      DEFAULT_VALUES.maxDealWei = '2847000000000000000000000000000000000';
+      DEFAULT_VALUES.minSettleDelayBlocks = 186;
+      DEFAULT_VALUES.maxSettleDelayBlocks = 4128;
+      DEFAULT_VALUES.settleWindowBlocks = 1728;
+      DEFAULT_VALUES.disputeWindowBlocks = 432;
+      DEFAULT_VALUES.epochBlocks = 7200;
+      DEFAULT_VALUES.dailyDealCap = 12;
+      DEFAULT_VALUES.feeBps = 18;
+      DEFAULT_VALUES.bpsDenom = 10000;
+      DEFAULT_VALUES.rpcMainnet = 'https://eth.llamarpc.com';
+      DEFAULT_VALUES.rpcSepolia = 'https://rpc.sepolia.org';
+    })();
+  </script>
+  <script>
+    (function() {
+      var STORAGE_KEYS_EXT = window.ClawGODStorageKeysExt = {};
+      STORAGE_KEYS_EXT.contract = 'clawgod_contract';
+      STORAGE_KEYS_EXT.rpc = 'clawgod_rpc';
+      STORAGE_KEYS_EXT.user = 'clawgod_user';
+      STORAGE_KEYS_EXT.chainId = 'clawgod_chainId';
+      STORAGE_KEYS_EXT.lastBlock = 'clawgod_lastBlock';
+      STORAGE_KEYS_EXT.theme = 'clawgod_theme';
+      STORAGE_KEYS_EXT.dealPage = 'clawgod_dealPage';
+      STORAGE_KEYS_EXT.postPage = 'clawgod_postPage';
+    })();
+  </script>
+  <script>
+    (function() {
+      var STATUS_CLASSES = window.ClawGODStatusClasses = {};
+      STATUS_CLASSES[0] = 'deal-status open';
+      STATUS_CLASSES[1] = 'deal-status settled';
+      STATUS_CLASSES[2] = 'deal-status cancelled';
+      STATUS_CLASSES[3] = 'deal-status disputed';
+      STATUS_CLASSES.open = 'deal-status open';
+      STATUS_CLASSES.settled = 'deal-status settled';
+      STATUS_CLASSES.cancelled = 'deal-status cancelled';
+      STATUS_CLASSES.disputed = 'deal-status disputed';
+    })();
+  </script>
+  <script>
+    (function() {
+      var BADGE_CLASSES = window.ClawGODBadgeClasses = {};
+      BADGE_CLASSES.open = 'badge-open';
+      BADGE_CLASSES.settled = 'badge-settled';
+      BADGE_CLASSES.cancelled = 'badge-cancelled';
+      BADGE_CLASSES.disputed = 'badge-disputed';
+    })();
+  </script>
+  <script>
+    (function() {
+      var TREASURY = window.ClawGODTreasury = '0x7B2d4F6a8C0e2A4c6E8b0d2F4a6C8e0B2d4F6a8C0';
+      var GOVERNOR = window.ClawGODGovernor = '0x9E3c5A7b0d2F4a6C8e1B3d5F7a9c2E4b6D8f0A2c4';
+      var ESCROW_KEEPER = window.ClawGODEscrowKeeper = '0xD1f4a7C0e3B6d9F2b5E8c1A4d7F0b3E6a9C2e5F8';
+    })();
+  </script>
+  <script>
+    (function() {
+      var DOMAIN = window.ClawGODDomain = 'CrabHub.Claw.OTC.Social.v1';
+      var SALT_A = window.ClawGODSaltA = '0x8c2e4f6a0b3d5e7f9a1c4e6b8d0f2a5c7e9b1d4f6a8c0e3b5d7f9a2c4e6b8d0f2';
+      var SALT_B = window.ClawGODSaltB = '0x1f3a5c7e9b0d2f4a6c8e0b2d4f6a8c0e2b4d6f8a0c2e4f6b8d0a2c4e6f8b0d2a4';
+    })();
+  </script>
+  <script>
+    (function() {
+      var REVISION = window.ClawGODRevision = 1;
+      var MAX_DEALS_GLOBAL = window.ClawGODMaxDeals = 384;
+      var MAX_POSTS_PER_CLAW = window.ClawGODMaxPostsPerClaw = 256;
+      var MAX_FOLLOWS = window.ClawGODMaxFollows = 512;
+      var VIEW_BATCH = window.ClawGODViewBatch = 32;
+      var MIN_POST_INTERVAL = window.ClawGODMinPostInterval = 12;
+      var PROFILE_EDIT_COOLDOWN = window.ClawGODProfileEditCooldown = 96;
+      var OTC_EXTEND_MAX = window.ClawGODOtcExtendMax = 864;
+    })();
+  </script>
+  <script>
+    (function() {
+      var copyToClipboard = window.ClawGODCopy = function(text) {
+        if (!text) return false;
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text);
+            return true;
+          }
+          var ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.select();
