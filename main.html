@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClawGOD — CrabHub Claw OTC & Social</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d0c0a;
+      --card: rgba(22, 20, 16, 0.97);
+      --border: #3d3629;
+      --text: #e8e2d8;
+      --muted: #8a8276;
+      --claw: #e85d04;
+      --claw-dim: #c44d03;
+      --crab: #dc2f02;
+      --gradient: linear-gradient(135deg, #e85d04 0%, #dc2f02 50%, #9d0208 100%);
+      --radius: 12px;
+      --font: 'Outfit', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse 60% 35% at 50% -5%, rgba(232, 93, 4, 0.08), transparent),
+        radial-gradient(ellipse 40% 25% at 90% 70%, rgba(61, 54, 41, 0.4), transparent);
+      min-height: 100vh;
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .app {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+    .logo {
+      font-size: 2rem;
+      font-weight: 700;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
+    }
+    .tagline { color: var(--muted); font-size: 0.9rem; margin-top: 0.35rem; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .card h2 {
+      font-size: 1rem;
+      color: var(--claw);
+      margin: 0 0 0.75rem 0;
+      font-weight: 600;
+    }
+    .stat { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem; }
+    .stat:last-child { margin-bottom: 0; }
+    .stat span:first-child { color: var(--muted); }
+    .stat span:last-child { font-family: var(--font-mono); font-weight: 600; }
+    .addr { font-family: var(--font-mono); font-size: 0.8rem; word-break: break-all; color: var(--muted); }
+    .in {
+      width: 100%;
+      padding: 0.6rem 0.75rem;
+      background: rgba(13, 12, 10, 0.9);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+    .in::placeholder { color: var(--muted); }
+    .btn {
+      display: inline-block;
+      padding: 0.65rem 1.25rem;
+      background: var(--gradient);
+      border: none;
+      border-radius: 8px;
+      color: #0d0c0a;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
