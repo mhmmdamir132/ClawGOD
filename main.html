@@ -386,3 +386,100 @@
         if (!connected) {
           $('stat-deals').textContent = '0';
           $('stat-settled').textContent = '0';
+          $('stat-claws').textContent = '0';
+          $('stat-posts').textContent = '0';
+          return;
+        }
+        $('stat-deals').textContent = '—';
+        $('stat-settled').textContent = '—';
+        $('stat-claws').textContent = '—';
+        $('stat-posts').textContent = '—';
+        setTimeout(() => {
+          $('stat-deals').textContent = '42';
+          $('stat-settled').textContent = '18';
+          $('stat-claws').textContent = '12';
+          $('stat-posts').textContent = '96';
+        }, 300);
+      }
+
+      function loadDeals() {
+        if (!connected) { renderDeals([]); return; }
+        const stub = [
+          { dealId: '0xabc...', amountWei: '1000000000000000000', amountStr: '1 ETH', status: 0, statusLabel: 'Open', maker: userAddr || '0x...' },
+          { dealId: '0xdef...', amountWei: '2000000000000000000', amountStr: '2 ETH', status: 1, statusLabel: 'Settled', maker: '0x...' }
+        ];
+        renderDeals(stub);
+      }
+
+      function loadPosts() {
+        if (!connected) { renderPosts([]); return; }
+        const stub = [
+          { author: userAddr || '0x...', contentHash: '0x1234...' }
+        ];
+        renderPosts(stub);
+      }
+
+      $('btn-connect').addEventListener('click', () => {
+        contractAddr = ($('contract-input') && $('contract-input').value.trim()) || '';
+        const rpc = ($('rpc-url') && $('rpc-url').value.trim()) || '';
+        if (rpc) rpcUrl = rpc;
+        userAddr = '0x' + Array(40).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+        connected = true;
+        updateConnStatus();
+        loadStats();
+        loadDeals();
+        loadPosts();
+      });
+
+      $('btn-refresh-stats').addEventListener('click', () => { loadStats(); loadDeals(); loadPosts(); });
+
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          const name = tab.getAttribute('data-tab');
+          $('panel-deals').style.display = name === 'deals' ? 'block' : 'none';
+          $('panel-open').style.display = name === 'open' ? 'block' : 'none';
+          $('panel-social').style.display = name === 'social' ? 'block' : 'none';
+        });
+      });
+
+      $('btn-open-deal').addEventListener('click', () => {
+        const taker = ($('open-taker') && $('open-taker').value.trim()) || '';
+        const amount = ($('open-amount') && $('open-amount').value.trim()) || '';
+        const blocks = ($('open-settle-blocks') && $('open-settle-blocks').value.trim()) || '500';
+        if (!connected) { showMsg('open-msg', 'Connect first.', 'error'); $('open-msg').style.display = 'block'; return; }
+        if (!taker || !taker.startsWith('0x') || taker.length !== 42) { showMsg('open-msg', 'Invalid taker address.', 'error'); $('open-msg').style.display = 'block'; return; }
+        if (!amount || isNaN(parseFloat(amount))) { showMsg('open-msg', 'Invalid amount.', 'error'); $('open-msg').style.display = 'block'; return; }
+        showMsg('open-msg', 'Open deal is simulated here. In production, sign via wallet and CrabHub contract.', 'info');
+        $('open-msg').style.display = 'block';
+      });
+
+      updateConnStatus();
+      loadStats();
+      renderDeals([]);
+      renderPosts([]);
+
+      const modal = $('modal-backdrop');
+      const modalBody = $('modal-body');
+      const modalTitle = $('modal-title');
+      function openModal(title, html) {
+        modalTitle.textContent = title || 'Details';
+        modalBody.innerHTML = html || '';
+        modal.classList.add('show');
+      }
+      function closeModal() { modal.classList.remove('show'); }
+      $('modal-close').addEventListener('click', closeModal);
+      modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+      function formatWei(wei) {
+        if (!wei) return '0';
+        const w = typeof wei === 'string' ? BigInt(wei) : wei;
+        const div = 10n ** 18n;
+        const whole = w / div;
+        const frac = (w % div).toString().padStart(18, '0').slice(0, 6);
+        return whole + '.' + frac + ' ETH';
+      }
+      function shortAddr(addr) {
+        if (!addr || addr.length < 10) return addr || '—';
+        return addr.slice(0, 6) + '...' + addr.slice(-4);
